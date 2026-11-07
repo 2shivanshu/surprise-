@@ -722,7 +722,6 @@ export function createExperience(canvas, options) {
         fwLife[slot] = style.life * (0.75 + Math.random() * 0.4);
         fwMax[slot] = fwLife[slot];
         fwAge[slot] = 0;
-        fireworks.userData.gravity = style.gravity;
         const shape = motifKind === 'heart' && Math.random() > 0.55 ? 3 : 0;
         paint(
           fireworks,
