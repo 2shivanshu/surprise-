@@ -25,6 +25,7 @@ export default defineConfig(({ command }) => ({
     rollupOptions: {
       output: {
         manualChunks: {
+          react: ['react', 'react-dom'],
           three: ['three'],
         },
       },
