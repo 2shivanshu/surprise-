@@ -463,18 +463,10 @@ export function createExperience(canvas, options) {
   stars.points.geometry.attributes.aColor.needsUpdate = true;
 
   const smokeLife = new Float32Array(smokeCount);
-  for (let i = 0; i < smokeCount; i += 1) {
-    resetSmoke(i, true);
-  }
-
   const glowLife = new Float32Array(glowCount);
   const glowVel = new Float32Array(glowCount * 3);
-  for (let i = 0; i < glowCount; i += 1) resetGlow(i, true);
-
   const motifLife = new Float32Array(motifCount);
   const motifVel = new Float32Array(motifCount * 3);
-  for (let i = 0; i < motifCount; i += 1) resetMotif(i, true);
-
   const fwLife = new Float32Array(fwCapacity);
   const fwVel = new Float32Array(fwCapacity * 3);
   const fwAge = new Float32Array(fwCapacity);
@@ -560,41 +552,6 @@ export function createExperience(canvas, options) {
   const parentSpin = new Quaternion();
   let fwCursor = 0;
   let palette = theme?.particle || ['#f2c56a', '#ffb15a', '#e4c8ff', '#fff4d4'];
-
-  applyTheme(theme, true);
-
-  function listen(target, type, handler, extra) {
-    target.addEventListener(type, handler, extra);
-    listeners.push(() => target.removeEventListener(type, handler, extra));
-  }
-
-  function resize() {
-    const width = canvas.clientWidth || window.innerWidth;
-    const height = canvas.clientHeight || window.innerHeight;
-    wide = width >= 960;
-    camera.aspect = width / Math.max(1, height);
-    camera.updateProjectionMatrix();
-    renderer.setSize(width, height, false);
-    const heightUniform = Math.min(height, 1100);
-    glow.material.uniforms.uHeight.value = heightUniform;
-    motif.material.uniforms.uHeight.value = heightUniform;
-    stars.material.uniforms.uHeight.value = heightUniform;
-    smoke.material.uniforms.uHeight.value = heightUniform;
-    fireworks.material.uniforms.uHeight.value = heightUniform;
-    setPhase(phase);
-  }
-
-  function onPointer(event) {
-    if (event.pointerType === 'touch') {
-      pointer.weight = Math.min(1, pointer.weight + 0.08);
-    } else {
-      pointer.weight = 1;
-    }
-    const w = window.innerWidth || 1;
-    const h = window.innerHeight || 1;
-    pointer.x = (event.clientX / w) * 2 - 1;
-    pointer.y = (event.clientY / h) * 2 - 1;
-  }
 
   function paint(pool, index, hex, alpha, size, shape) {
     scratch.set(hex);
@@ -704,6 +661,47 @@ export function createExperience(canvas, options) {
     markPool(glow);
     markPool(motif);
   }
+
+  for (let i = 0; i < smokeCount; i += 1) resetSmoke(i, true);
+  for (let i = 0; i < glowCount; i += 1) resetGlow(i, true);
+  for (let i = 0; i < motifCount; i += 1) resetMotif(i, true);
+
+  applyTheme(theme, true);
+
+  function listen(target, type, handler, extra) {
+    target.addEventListener(type, handler, extra);
+    listeners.push(() => target.removeEventListener(type, handler, extra));
+  }
+
+  function resize() {
+    const width = canvas.clientWidth || window.innerWidth;
+    const height = canvas.clientHeight || window.innerHeight;
+    wide = width >= 960;
+    camera.aspect = width / Math.max(1, height);
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height, false);
+    const heightUniform = Math.min(height, 1100);
+    glow.material.uniforms.uHeight.value = heightUniform;
+    motif.material.uniforms.uHeight.value = heightUniform;
+    stars.material.uniforms.uHeight.value = heightUniform;
+    smoke.material.uniforms.uHeight.value = heightUniform;
+    fireworks.material.uniforms.uHeight.value = heightUniform;
+    setPhase(phase);
+  }
+
+  function onPointer(event) {
+    if (event.pointerType === 'touch') {
+      pointer.weight = Math.min(1, pointer.weight + 0.08);
+    } else {
+      pointer.weight = 1;
+    }
+    const w = window.innerWidth || 1;
+    const h = window.innerHeight || 1;
+    pointer.x = (event.clientX / w) * 2 - 1;
+    pointer.y = (event.clientY / h) * 2 - 1;
+  }
+
+
 
   function spawnBurst(origin, styleName, scale = 1) {
     const style = FW[styleName] || FW.elegant;
